@@ -24,9 +24,35 @@ CREATE TABLE zips (
     state_id  CHAR(2)
 );
 
+-- One row per order (order_no = first part of order_id); shipping results per scenario
+-- (parcel = order × factory; costs from notebook 04, two rate tables)
+CREATE TABLE orders_scenarios (
+    order_no                        VARCHAR(20) PRIMARY KEY,
+    customer_id                     INTEGER NOT NULL,
+    postal_code                     CHAR(5) NOT NULL REFERENCES zips(zip),
+    order_date                      DATE NOT NULL,
+    ship_mode                       VARCHAR(20) NOT NULL,
+    units                           INTEGER NOT NULL,
+    sales                           NUMERIC(10,2) NOT NULL,
+    gross_profit                    NUMERIC(10,2) NOT NULL,
+    current_parcels                 SMALLINT NOT NULL,
+    current_road_miles              NUMERIC(10,2) NOT NULL,
+    current_cost_usps_commercial    NUMERIC(10,4) NOT NULL,
+    current_cost_ups_ground         NUMERIC(10,4) NOT NULL,
+    realistic_parcels               SMALLINT NOT NULL,
+    realistic_road_miles            NUMERIC(10,2) NOT NULL,
+    realistic_cost_usps_commercial  NUMERIC(10,4) NOT NULL,
+    realistic_cost_ups_ground       NUMERIC(10,4) NOT NULL,
+    optimum_parcels                 SMALLINT NOT NULL,
+    optimum_road_miles              NUMERIC(10,2) NOT NULL,
+    optimum_cost_usps_commercial    NUMERIC(10,4) NOT NULL,
+    optimum_cost_ups_ground         NUMERIC(10,4) NOT NULL
+);
+
 CREATE TABLE sales (
     row_id          INTEGER PRIMARY KEY,
     order_id        VARCHAR(30) NOT NULL,
+    order_no        VARCHAR(20) NOT NULL REFERENCES orders_scenarios(order_no),
     order_date      DATE NOT NULL,
     ship_date       DATE NOT NULL,
     lead_time_days  INTEGER NOT NULL,
